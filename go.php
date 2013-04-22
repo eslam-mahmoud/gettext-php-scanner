@@ -12,14 +12,13 @@
 
 /*
  * TODO
- * let patters start with many functions like __ & _e
- * enhance pattern
- * accept array of directories
+ * enhance pattern & let patters start with many functions like __ & _e
  */
 
 class poedit {
 
-    //Scan the curnt directory.
+    //Default scan the curnt directory, accept string as directory path or array or directories
+    //Directory path mast end with '/'
     var $directory = './';
     //Pattern to match __('any text')
     var $pattern = '/__\(\'[a-zA-Z0-9\s\'\"\_\,\`\?\!\.\-]*\'\)/';
@@ -30,7 +29,19 @@ class poedit {
     //Try to match every line with the pattern
     function scan_dir($directory, $pattern) {
 	$lines = array();
-
+	
+	if(is_array($directory)){
+	    foreach ($directory as $k=>$dir){
+		$sub_lines = $this->scan_dir($dir, $pattern);
+		$lines = array_merge($lines, $sub_lines);
+	    }
+	    
+	    return $lines;
+	}
+	
+	if( !is_dir($directory) )
+	    return false;
+	
 	if ($handle = opendir($directory)) {
 	    //Get every file or sub directory in the defined directory
 	    while (false !== ($file = readdir($handle))) {
@@ -48,8 +59,6 @@ class poedit {
 
 		    if ($file_lines)
 			$lines = array_merge($lines, $file_lines);
-		    else
-			continue;
 		}
 	    }
 	    closedir($handle);
