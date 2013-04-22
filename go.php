@@ -20,10 +20,11 @@ class poedit {
 
     //Scan the curnt directory.
     var $directory = './';
-    //var $pattern = '/__\(\'([a-zA-Z0-9\s\'\"\_\,\`\?\!\.\-]*)\'\)/';
     //Pattern to match __('any text')
     var $pattern = '/__\(\'[a-zA-Z0-9\s\'\"\_\,\`\?\!\.\-]*\'\)/';
-
+    //Files extensions to scan, accept Array()
+    var $file_extensions = false;
+    
     //Scan the directory and sub directories
     //Try to match every line with the pattern
     function scan_dir($directory, $pattern) {
@@ -40,6 +41,13 @@ class poedit {
 			$sub_lines = $this->scan_dir($file . '/', $pattern);
 			$lines = array_merge($lines, $sub_lines);
 		    } else {
+			//check the file extension, if there and not the same as file extension skip the file
+			if($this->file_extensions){
+			    $pathinfo = pathinfo($file);
+			    if( !in_array($pathinfo['extension'], $this->file_extensions) )
+				continue;
+			}
+			
 			//Open the file
 			$fh = fopen($file, 'r') or die($php_errormsg);
 			$i = 1;
