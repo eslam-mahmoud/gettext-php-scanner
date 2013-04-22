@@ -6,19 +6,14 @@
  * Discription: Class to scan directory or file and extract all strings need to be translated.
  */
 
-/*
- * TODO
- * enhance pattern to get correct result in (__('pattern should get me :)'),'pattern should not get me !!')
- */
-
 class poedit {
 
     //Default scan the curnt directory, accept string as directory path or array or directories
     //Directory path mast end with '/'
     var $directory = './';
     //Pattern to match
-    //var $pattern = '/(__|_e)\((\'|\")([a-zA-Z0-9\s\'\"\_\,\`\?\!\.\-]+)(\'|\")\)/';
-    var $pattern = '/(__|_e)\((\'|\")(.+)(\'|\")\)/';
+    //(__('pattern should get me :)'),'pattern should not get me !!') and if there another __('text need translation') in the same line it will be there 
+    var $pattern = '/(__|_e)\((\'|\")(.+?)(\'|\")\)/';
     //Files extensions to scan, accept Array()
     var $file_extensions = false;
 
@@ -99,17 +94,20 @@ class poedit {
 	    // read each line and trim off leading/trailing whitespace
 	    if ($s = trim(fgets($fh, 16384))) {
 		// match the line to the pattern
-		if (preg_match($pattern, $s, $matches)) {
+		
+		if (preg_match_all($pattern, $s, $matches)) {
 		    //$matches[0] -> full pattern
 		    //$matches[1] -> method __ OR _e
 		    //$matches[2] -> ' OR "
-		    //$matches[3] -> text
+		    //$matches[3] -> array ('text1', 'text2')
 		    //$matches[4] -> ' OR "
 		    if (!isset($matches[3]))
 			continue;
 
-		    if (!in_array($matches[3], $lines)) {
-			$lines[] = $matches[3];
+		    foreach($matches[3] as $k=>$text){
+			if (!in_array($text, $lines)) {
+			    $lines[] = $text;
+			}
 		    }
 		} else {
 		    // complain if the line didn't match the pattern 
