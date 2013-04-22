@@ -20,7 +20,7 @@ class poedit {
     //Default scan the curnt directory, accept string as directory path or array or directories
     //Directory path mast end with '/'
     var $directory = './';
-    //Pattern to match __('any text')
+    //Pattern to match
     var $pattern = '/__\(\'[a-zA-Z0-9\s\'\"\_\,\`\?\!\.\-]*\'\)/';
     //Files extensions to scan, accept Array()
     var $file_extensions = false;
