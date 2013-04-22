@@ -49,7 +49,7 @@ class poedit {
 		    if ($file_lines)
 			$lines = array_merge($lines, $file_lines);
 		    else
-			return false;
+			continue;
 		}
 	    }
 	    closedir($handle);
