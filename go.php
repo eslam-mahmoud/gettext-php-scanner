@@ -18,8 +18,10 @@
  */
 class poedit {
 
-    var $directory = './app/';
+    //Scan the curnt directory.
+    var $directory = './';
     //var $pattern = '/__\(\'([a-zA-Z0-9\s\'\"\_\,\`\?\!\.\-]*)\'\)/';
+    //Pattern to match __('any text')
     var $pattern = '/__\(\'[a-zA-Z0-9\s\'\"\_\,\`\?\!\.\-]*\'\)/';
 
     function scan_dir($directory, $pattern) {
@@ -81,8 +83,15 @@ class poedit {
 
 }
 
+/*
+ * Example of how to use this class
+ * 
+ */
 $poedit = new poedit();
 $lines = $poedit->scan_dir($poedit->directory, $poedit->pattern);
-print_r($lines);
-var_dump($poedit->creat_po($lines));
+echo count($lines) . ' lines have been collected and need to be translated <br>';
+if($poedit->creat_po($lines))
+    echo '"lang.po" file has been created in the same directory of this script fined it at <a href="lang.po">download lang.po</a>';
+else
+    echo 'Error could not create the file please check if you have the right permetions';
 ?>
