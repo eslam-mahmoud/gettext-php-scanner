@@ -1,18 +1,14 @@
 <?php
 
 /*
- * if directory exist
- * scan directory
- * for each result if directory scan it
- * if file get it
- * for each line parse it
- * if pache regex get text add it to array
- * creat file with the result mach .pot files
+ * Developer: Eslam Mahmoud contact@eslam.me
+ * URL: http://eslam.me
+ * Discription: Class to scan directory or file and extract all strings need to be translated.
  */
 
 /*
  * TODO
- * enhance pattern & let patters start with many functions like __ & _e
+ * enhance pattern to get correct result in (__('pattern should get me :)'),'pattern should not get me !!')
  */
 
 class poedit {
@@ -21,7 +17,8 @@ class poedit {
     //Directory path mast end with '/'
     var $directory = './';
     //Pattern to match
-    var $pattern = '/__\(\'[a-zA-Z0-9\s\'\"\_\,\`\?\!\.\-]*\'\)/';
+    //var $pattern = '/(__|_e)\((\'|\")([a-zA-Z0-9\s\'\"\_\,\`\?\!\.\-]+)(\'|\")\)/';
+    var $pattern = '/(__|_e)\((\'|\")(.+)(\'|\")\)/';
     //Files extensions to scan, accept Array()
     var $file_extensions = false;
 
@@ -29,19 +26,19 @@ class poedit {
     //Try to match every line with the pattern
     function scan_dir($directory, $pattern) {
 	$lines = array();
-	
-	if(is_array($directory)){
-	    foreach ($directory as $k=>$dir){
+
+	if (is_array($directory)) {
+	    foreach ($directory as $k => $dir) {
 		$sub_lines = $this->scan_dir($dir, $pattern);
 		$lines = array_merge($lines, $sub_lines);
 	    }
-	    
+
 	    return $lines;
 	}
-	
-	if( !is_dir($directory) )
+
+	if (!is_dir($directory))
 	    return false;
-	
+
 	if ($handle = opendir($directory)) {
 	    //Get every file or sub directory in the defined directory
 	    while (false !== ($file = readdir($handle))) {
@@ -103,12 +100,16 @@ class poedit {
 	    if ($s = trim(fgets($fh, 16384))) {
 		// match the line to the pattern
 		if (preg_match($pattern, $s, $matches)) {
-		    foreach ($matches as $k => $v) {
-			//lines cleaning
-			$v = str_replace(array('__(\'', '\')'), '', $v);
-			if (!in_array($v, $lines)) {
-			    $lines[] = $v;
-			}
+		    //$matches[0] -> full pattern
+		    //$matches[1] -> method __ OR _e
+		    //$matches[2] -> ' OR "
+		    //$matches[3] -> text
+		    //$matches[4] -> ' OR "
+		    if (!isset($matches[3]))
+			continue;
+
+		    if (!in_array($matches[3], $lines)) {
+			$lines[] = $matches[3];
 		    }
 		} else {
 		    // complain if the line didn't match the pattern 

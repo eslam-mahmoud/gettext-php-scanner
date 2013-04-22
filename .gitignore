@@ -1,3 +1,3 @@
 *.DS_STORE
 *~
-lang.po
+*.po
