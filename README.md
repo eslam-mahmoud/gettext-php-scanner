@@ -2,7 +2,7 @@ poedit
 ======
 
 
-## description
+## Description
 
 PHP class to scan files/project and create .po file, used for localization. Could be used to scan any type of files, It will extract all strings like __('txt').
 
