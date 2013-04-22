@@ -24,18 +24,23 @@ class poedit {
     //Pattern to match __('any text')
     var $pattern = '/__\(\'[a-zA-Z0-9\s\'\"\_\,\`\?\!\.\-]*\'\)/';
 
+    //Scan the directory and sub directories
+    //Try to match every line with the pattern
     function scan_dir($directory, $pattern) {
 	$lines = array();
 
 	if ($handle = opendir($directory)) {
+	    //Get every file or sub directory in the defined directory
 	    while (false !== ($file = readdir($handle))) {
 		if ($file != "." && $file != "..") {
 		    //echo "<br><br>" . $file . "<br>";
 		    $file = $directory . $file;
+		    //If sub directory call this function recursively
 		    if (is_dir($file)) {
 			$sub_lines = $this->scan_dir($file . '/', $pattern);
 			$lines = array_merge($lines, $sub_lines);
 		    } else {
+			//Open the file
 			$fh = fopen($file, 'r') or die($php_errormsg);
 			$i = 1;
 			while (!feof($fh)) {
@@ -66,7 +71,8 @@ class poedit {
 
 	return $lines;
     }
-
+    
+    //Creat the .po file named lang.po
     function creat_po($lines = array()) {
 	if (count($lines) < 1)
 	    return false;
@@ -85,13 +91,12 @@ class poedit {
 
 /*
  * Example of how to use this class
- * 
  */
 $poedit = new poedit();
 $lines = $poedit->scan_dir($poedit->directory, $poedit->pattern);
 echo count($lines) . ' lines have been collected and need to be translated <br>';
 if($poedit->creat_po($lines))
-    echo '"lang.po" file has been created in the same directory of this script fined it at <a href="lang.po">download lang.po</a>';
+    echo '"lang.po" file has been created in the same directory of this script find it at <a href="lang.po">download lang.po</a>';
 else
-    echo 'Error could not create the file please check if you have the right permetions';
+    echo 'Error could not create the file please check if you have the right permissions';
 ?>
