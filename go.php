@@ -13,18 +13,18 @@ class poedit {
     var $directory = './';
     //Pattern to match
     //(__('pattern should get me :)'),'pattern should not get me !!') and if there another __('text need translation') in the same line it will be there 
-    var $pattern = '/(__|_e)\((\'|\")(.+?)(\'|\")\)/';
+    private $pattern = '/(__|_e)\((\'|\")(.+?)(\'|\")\)/';
     //Files extensions to scan, accept Array()
     var $file_extensions = false;
 
     //Scan the directory and sub directories
     //Try to match every line with the pattern
-    function scan_dir($directory, $pattern) {
+    function scan_dir($directory) {
 	$lines = array();
 
 	if (is_array($directory)) {
 	    foreach ($directory as $k => $dir) {
-		$sub_lines = $this->scan_dir($dir, $pattern);
+		$sub_lines = $this->scan_dir($dir);
 		$lines = array_merge($lines, $sub_lines);
 	    }
 
@@ -44,10 +44,10 @@ class poedit {
 		$file = $directory . $file;
 		//If sub directory call this function recursively
 		if (is_dir($file)) {
-		    $sub_lines = $this->scan_dir($file . '/', $pattern);
+		    $sub_lines = $this->scan_dir($file . '/');
 		    $lines = array_merge($lines, $sub_lines);
 		} else {
-		    $file_lines = $this->parse_file($file, $pattern);
+		    $file_lines = $this->parse_file($file);
 
 		    if ($file_lines)
 			$lines = array_merge($lines, $file_lines);
@@ -75,8 +75,8 @@ class poedit {
     }
 
     //parse file to get lines
-    function parse_file($file = false, $pattern = false) {
-	if (!$file || !$pattern || !is_file($file))
+    function parse_file($file = false) {
+	if (!$file || !is_file($file))
 	    return false;
 
 	//check the file extension, if there and not the same as file extension skip the file
@@ -95,7 +95,7 @@ class poedit {
 	    if ($s = trim(fgets($fh, 16384))) {
 		// match the line to the pattern
 		
-		if (preg_match_all($pattern, $s, $matches)) {
+		if (preg_match_all($this->pattern, $s, $matches)) {
 		    //$matches[0] -> full pattern
 		    //$matches[1] -> method __ OR _e
 		    //$matches[2] -> ' OR "
@@ -127,7 +127,7 @@ class poedit {
  * Example of how to use this class
  */
 $poedit = new poedit();
-$lines = $poedit->scan_dir($poedit->directory, $poedit->pattern);
+$lines = $poedit->scan_dir($poedit->directory);
 echo count($lines) . ' lines have been collected and need to be translated <br>';
 if ($poedit->creat_po($lines))
     echo '"lang.po" file has been created in the same directory of this script find it at <a href="lang.po">download lang.po</a>';
