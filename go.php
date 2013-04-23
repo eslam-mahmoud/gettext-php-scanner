@@ -16,7 +16,9 @@ class poedit {
     private $pattern = '/(__|_e)\((\'|\")(.+?)(\'|\")\)/';
     //Files extensions to scan, accept Array()
     var $file_extensions = false;
-
+    //Default output file name will
+    var $file_name = 'default.po';
+    
     //Scan the directory and sub directories
     //Try to match every line with the pattern
     function scan_dir($directory) {
@@ -55,18 +57,26 @@ class poedit {
 	    }
 	    closedir($handle);
 	}
+	
+	$lines = array_unique($lines);
 
 	return $lines;
     }
 
-    //Create the .po file named lang.po
+    //Create the .po file
     function create_po($lines = array()) {
 	if (count($lines) < 1)
 	    return false;
-
-	touch('./lang.po');
-	$file = fopen('./lang.po', 'w+') or die('could not open file');
+	
+	$old_content = '';
+	if(file_exists($this->file_name))
+	    $old_content = file_get_contents($this->file_name);
+	
+	$file = fopen($this->file_name, 'a+') or die('could not open file');
 	foreach ($lines as $k => $line) {
+	    if(preg_match('/' . $line . '/', $old_content, $matches))
+		continue;
+	    
 	    fwrite($file, 'msgid "' . $line . '"' . "\n" . 'msgstr ""' . "\n\n");
 	}
 	fclose($file);
@@ -130,7 +140,7 @@ $poedit = new poedit();
 $lines = $poedit->scan_dir($poedit->directory);
 echo count($lines) . ' lines have been collected and need to be translated <br>';
 if ($poedit->create_po($lines))
-    echo '"lang.po" file has been created in the same directory of this script find it at <a href="lang.po">download lang.po</a>';
+    echo '"'.$poedit->file_name.'" file has been created in the same directory of this script find it at <a href="lang.po">download lang.po</a>';
 else
     echo 'Error could not create the file please check if you have the right permissions';
 ?>
