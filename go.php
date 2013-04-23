@@ -18,10 +18,13 @@ class poedit {
     var $file_extensions = false;
     //Default output file name will
     var $file_name = 'default.po';
-    
+
     //Scan the directory and sub directories
-    //Try to match every line with the pattern
-    function scan_dir($directory) {
+    //Try to match every line in each file with the pattern
+    function scan_dir($directory = false) {
+	if (!$directory)
+	    $directory = $this->directory;
+
 	$lines = array();
 
 	if (is_array($directory)) {
@@ -57,7 +60,7 @@ class poedit {
 	    }
 	    closedir($handle);
 	}
-	
+
 	//Removes duplicate values from an array
 	$lines = array_unique($lines);
 
@@ -69,19 +72,19 @@ class poedit {
     function create_po($lines = array()) {
 	if (count($lines) < 1)
 	    return false;
-	
+
 	//Get the old content
 	$old_content = '';
-	if(file_exists($this->file_name))
+	if (file_exists($this->file_name))
 	    $old_content = file_get_contents($this->file_name);
-	
+
 	//Open the file and append on it or create it if not there
 	$file = fopen($this->file_name, 'a+') or die('could not open file');
 	foreach ($lines as $k => $line) {
 	    //Check to see if the line was in the file
-	    if(preg_match('/' . $line . '/', $old_content, $matches))
+	    if (preg_match('/' . $line . '/', $old_content, $matches))
 		continue;
-	    
+
 	    fwrite($file, 'msgid "' . $line . '"' . "\n" . 'msgstr ""' . "\n\n");
 	}
 	fclose($file);
@@ -109,7 +112,7 @@ class poedit {
 	    // read each line and trim off leading/trailing whitespace
 	    if ($s = trim(fgets($fh, 16384))) {
 		// match the line to the pattern
-		
+
 		if (preg_match_all($this->pattern, $s, $matches)) {
 		    //$matches[0] -> full pattern
 		    //$matches[1] -> method __ OR _e
@@ -120,8 +123,8 @@ class poedit {
 			continue;
 
 		    //Add the lines without duplicate values
-		    foreach($matches[3] as $k=>$text){
-			if (!in_array($text, $lines)) 
+		    foreach ($matches[3] as $k => $text) {
+			if (!in_array($text, $lines))
 			    $lines[] = $text;
 		    }
 		} else {
@@ -142,10 +145,10 @@ class poedit {
  * Example of how to use this class
  */
 $poedit = new poedit();
-$lines = $poedit->scan_dir($poedit->directory);
+$lines = $poedit->scan_dir();
 echo count($lines) . ' lines have been collected and need to be translated <br>';
 if ($poedit->create_po($lines))
-    echo '"'.$poedit->file_name.'" file has been created in the same directory of this script find it at <a href="'.$poedit->file_name.'">download '.$poedit->file_name.'</a>';
+    echo '"' . $poedit->file_name . '" file has been created in the same directory of this script find it at <a href="' . $poedit->file_name . '">download ' . $poedit->file_name . '</a>';
 else
     echo 'Error could not create the file please check if you have the right permissions';
 ?>
