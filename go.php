@@ -59,8 +59,8 @@ class poedit {
 	return $lines;
     }
 
-    //Creat the .po file named lang.po
-    function creat_po($lines = array()) {
+    //Create the .po file named lang.po
+    function create_po($lines = array()) {
 	if (count($lines) < 1)
 	    return false;
 
@@ -129,7 +129,7 @@ class poedit {
 $poedit = new poedit();
 $lines = $poedit->scan_dir($poedit->directory);
 echo count($lines) . ' lines have been collected and need to be translated <br>';
-if ($poedit->creat_po($lines))
+if ($poedit->create_po($lines))
     echo '"lang.po" file has been created in the same directory of this script find it at <a href="lang.po">download lang.po</a>';
 else
     echo 'Error could not create the file please check if you have the right permissions';
