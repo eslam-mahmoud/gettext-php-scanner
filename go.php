@@ -58,22 +58,27 @@ class poedit {
 	    closedir($handle);
 	}
 	
+	//Removes duplicate values from an array
 	$lines = array_unique($lines);
 
 	return $lines;
     }
 
-    //Create the .po file
+    //Create the .po file if not exists
+    //If file exist will be updated with the new lines only
     function create_po($lines = array()) {
 	if (count($lines) < 1)
 	    return false;
 	
+	//Get the old content
 	$old_content = '';
 	if(file_exists($this->file_name))
 	    $old_content = file_get_contents($this->file_name);
 	
+	//Open the file and append on it or create it if not there
 	$file = fopen($this->file_name, 'a+') or die('could not open file');
 	foreach ($lines as $k => $line) {
+	    //Check to see if the line was in the file
 	    if(preg_match('/' . $line . '/', $old_content, $matches))
 		continue;
 	    
@@ -98,7 +103,7 @@ class poedit {
 
 	$lines = array();
 	//Open the file
-	$fh = fopen($file, 'r') or die($php_errormsg);
+	$fh = fopen($file, 'r') or die('Could not open file ' . $file);
 	$i = 1;
 	while (!feof($fh)) {
 	    // read each line and trim off leading/trailing whitespace
@@ -114,10 +119,10 @@ class poedit {
 		    if (!isset($matches[3]))
 			continue;
 
+		    //Add the lines without duplicate values
 		    foreach($matches[3] as $k=>$text){
-			if (!in_array($text, $lines)) {
+			if (!in_array($text, $lines)) 
 			    $lines[] = $text;
-			}
 		    }
 		} else {
 		    // complain if the line didn't match the pattern 
@@ -126,7 +131,7 @@ class poedit {
 	    }
 	    $i++;
 	}
-	fclose($fh) or die($php_errormsg);
+	fclose($fh) or die('Could not close file ' . $file);
 
 	return $lines;
     }
