@@ -131,7 +131,7 @@ class poedit {
 	    }
 	    $i++;
 	}
-	fclose($fh) or die('Could not close file ' . $file);
+	fclose($fh) or die('Could not c file ' . $file);
 
 	return $lines;
     }
@@ -145,7 +145,7 @@ $poedit = new poedit();
 $lines = $poedit->scan_dir($poedit->directory);
 echo count($lines) . ' lines have been collected and need to be translated <br>';
 if ($poedit->create_po($lines))
-    echo '"'.$poedit->file_name.'" file has been created in the same directory of this script find it at <a href="lang.po">download lang.po</a>';
+    echo '"'.$poedit->file_name.'" file has been created in the same directory of this script find it at <a href="'.$poedit->file_name.'">download '.$poedit->file_name.'</a>';
 else
     echo 'Error could not create the file please check if you have the right permissions';
 ?>
