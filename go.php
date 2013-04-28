@@ -3,7 +3,7 @@
 /*
  * Developer: Eslam Mahmoud contact@eslam.me
  * URL: http://eslam.me
- * Discription: Class to scan directory or file and extract all strings need to be translated.
+ * Discription: PHP class to scan files/project and create or update .po file, used for localization. Could be used to scan any type of files, It will extract all strings like __('Hello World') Or _e("Hello again.")
  */
 
 class poedit {
@@ -142,13 +142,13 @@ class poedit {
 }
 
 /*
- * Example of how to use this class
- */
-$poedit = new poedit();
-$lines = $poedit->scan_dir();
-echo count($lines) . ' lines have been collected and need to be translated <br>';
-if ($poedit->create_po($lines))
-    echo '"' . $poedit->file_name . '" file has been created in the same directory of this script find it at <a href="' . $poedit->file_name . '">download ' . $poedit->file_name . '</a>';
-else
-    echo 'Error could not create the file please check if you have the right permissions';
+    //Example of how to use this class
+    $poedit = new poedit();
+    $lines = $poedit->scan_dir();
+    echo count($lines) . ' lines have been collected and need to be translated <br>';
+    if ($poedit->create_po($lines))
+	echo '"' . $poedit->file_name . '" file has been created in the same directory of this script find it at <a href="' . $poedit->file_name . '">download ' . $poedit->file_name . '</a>';
+    else
+        echo 'Error could not create the file please check if you have the right permissions';
+*/
 ?>
