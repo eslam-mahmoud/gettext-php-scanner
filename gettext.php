@@ -6,7 +6,7 @@
  * Discription: PHP class to scan files/project and create or update .po file, used for localization. Could be used to scan any type of files, It will extract all strings like __('Hello World') Or _e("Hello again.")
  */
 
-class poedit {
+class gettext {
 
     //Default scan the curnt directory, accept string as directory path or array or directories
     //Directory path mast end with '/'
@@ -79,7 +79,7 @@ class poedit {
 	    $old_content = file_get_contents($this->file_name);
 
 	//Open the file and append on it or create it if not there
-	$file = fopen($this->file_name, 'a+') or die('could not open file');
+	$file = fopen($this->file_name, 'a+') or die('Could bot open file '. $this->file_name);
 	foreach ($lines as $k => $line) {
 	    //Check to see if the line was in the file
 	    if (preg_match('/' . $line . '/', $old_content, $matches))
@@ -140,15 +140,4 @@ class poedit {
     }
 
 }
-
-/*
-    //Example of how to use this class
-    $poedit = new poedit();
-    $lines = $poedit->scan_dir();
-    echo count($lines) . ' lines have been collected and need to be translated <br>';
-    if ($poedit->create_po($lines))
-	echo '"' . $poedit->file_name . '" file has been created in the same directory of this script find it at <a href="' . $poedit->file_name . '">download ' . $poedit->file_name . '</a>';
-    else
-        echo 'Error could not create the file please check if you have the right permissions';
-*/
 ?>
