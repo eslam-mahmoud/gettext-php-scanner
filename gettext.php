@@ -13,7 +13,8 @@ class gettext {
 	var $directory = './';
 	//Pattern to match
 	//(__('pattern should get me :)'),'pattern should not get me !!') and if there another __('text need translation') in the same line it will be there 
-	private $pattern = '/(__|_e)\((\'|\")(.+?)(\'|\")\)/';
+	// __('pattern gets %s','me') too
+	private $pattern = '/(__|_e)\((\'|\")(.+?)(\'|\")(,.*)?\)/';
 	//Files extensions to scan, accept Array()
 	var $file_extensions = false;
 	//Default output file name will
