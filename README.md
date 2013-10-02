@@ -4,7 +4,7 @@ Created by Eslam Mahmoud <http://eslam.me> <contact@eslam.me>
 
 ## Description
 
-PHP class to scan files/project and create or update .po file, used for localization. Could be used to scan any type of files, It will extract all strings like __('Hello World') Or _e("Hello again.").
+PHP class to scan files/project and create or update .po file, used for localization. Could be used to scan any type of files, It will extract all strings like __('Hello World'), _e("Hello again.") or  _e('Hello %s',$username).
 
 
 ## Configuration
